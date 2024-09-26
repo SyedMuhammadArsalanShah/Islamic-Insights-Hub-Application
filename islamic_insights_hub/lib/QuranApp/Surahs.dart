@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'package:http/http.dart' as http;
 import 'surahindex.dart';
@@ -30,7 +31,7 @@ class _SurahsState extends State<Surahs> {
         dataResponse = mapResponse['data'];
         int indexofsurah = widget.name.numm - 1;
         listResponse = dataResponse['surahs'][indexofsurah]['ayahs'];
-           print("WA910=>$listResponse");
+        print("WA910=>$listResponse");
       });
     }
   }
@@ -48,14 +49,14 @@ class _SurahsState extends State<Surahs> {
         appBar: AppBar(
           title: Text("Surah ${widget.name.namee}",
               style: const TextStyle(fontFamily: 'alq', color: Colors.white)),
-          backgroundColor:Color(0xff023E73),
+          backgroundColor: Color(0xff023E73),
         ),
         body: Column(
           children: [
             Center(
               child: Card(
                 elevation: 8,
-                color:Color(0xff023E73),
+                color: Color(0xff023E73),
                 shadowColor: Colors.indigo,
                 margin: const EdgeInsets.all(10),
                 shape: BeveledRectangleBorder(
@@ -66,7 +67,7 @@ class _SurahsState extends State<Surahs> {
                       backgroundColor: Colors.white,
                       child: Text(
                         "${widget.name.numm}",
-                        style: TextStyle(color:Color(0xff023E73)),
+                        style: TextStyle(color: Color(0xff023E73)),
                       ),
                     ),
                     subtitle: Column(
@@ -75,21 +76,18 @@ class _SurahsState extends State<Surahs> {
                       children: [
                         Text("Surah ${widget.name.namee} ",
                             textAlign: TextAlign.center,
-                            style: const TextStyle(
-                                fontFamily: 'alq',
+                               style: GoogleFonts.amiriQuran(
                                 fontSize: 15,
                                 color: Colors.white)),
                         Text(widget.name.englishNameTranslation,
                             textAlign: TextAlign.center,
-                            style: const TextStyle(
-                                fontFamily: 'alq', color: Colors.white)),
+                             style: GoogleFonts.amiriQuran( color: Colors.white)),
                       ],
                     ),
                     title: Text(widget.name.urname,
                         textAlign: TextAlign.center,
                         textDirection: TextDirection.rtl,
-                        style:
-                            const TextStyle(fontFamily: 'alq', color: Colors.white)),
+                         style: GoogleFonts.amiriQuran( color: Colors.white)),
                     trailing: Column(
                       mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -107,50 +105,43 @@ class _SurahsState extends State<Surahs> {
                     )),
               ),
             ),
-            
-            
             listResponse.isNotEmpty
-            ? Expanded(
-                child: ListView.builder(
-              itemBuilder: (context, index) {
-                // ignore: unnecessary_null_comparison
-                if (listResponse != null) {
-                  return Card(
-                    margin: const EdgeInsets.all(10),
-                    shape: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: const BorderSide(color: Colors.white)),
-                    child: ListTile(
-                      // onTap: () {},
+                ? Expanded(
+                    child: ListView.builder(
+                    itemBuilder: (context, index) {
+                      // ignore: unnecessary_null_comparison
+                      if (listResponse != null) {
+                        return Card(
+                          margin: const EdgeInsets.all(10),
+                          shape: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide:
+                                  const BorderSide(color: Colors.white)),
+                          child: ListTile(
+                            // onTap: () {},
 
-                      title: Padding(
-                        padding: const EdgeInsets.all(20.0),
-                        child: Text(
-                          listResponse[index]['text'],
-                          textDirection: TextDirection.rtl,
-                          style:
-                              const TextStyle(fontFamily: 'alq', color: Colors.black),
-                        ),
-                      ),
-                    ),
-                  );
-                } else {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-              },
-              itemCount:  listResponse.length,
-            )):
-            Center(
-                child: LinearProgressIndicator(),
-              )
+                            title: Padding(
+                              padding: const EdgeInsets.all(20.0),
+                              child: Text(
+                                listResponse[index]['text'],
+                                textDirection: TextDirection.rtl,
+                                  style: GoogleFonts.amiriQuran( color: Colors.black),
+                              ),
+                            ),
+                          ),
+                        );
+                      } else {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+                    },
+                    itemCount: listResponse.length,
+                  ))
+                : Center(
+                    child: LinearProgressIndicator(),
+                  )
           ],
-        )
-        
-        
-        
-        
-        );
+        ));
   }
 }

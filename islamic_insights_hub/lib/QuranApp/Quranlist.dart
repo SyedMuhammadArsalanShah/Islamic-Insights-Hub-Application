@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'package:http/http.dart' as http;
 import 'Surahs.dart';
@@ -76,10 +77,10 @@ class _QuranlistState extends State<Quranlist> {
                         ),
                       ),
                       title: Text(listResponse[index]['name'],
-                          style: TextStyle(fontFamily: 'alq')),
+                             style: GoogleFonts.amiriQuran()),
                       subtitle: Text(
                         listResponse[index]['englishName'],
-                        style: TextStyle(fontFamily: 'alq', color: Color(0Xff0367A6)),
+                        style: GoogleFonts.amiriQuran(color: Color(0Xff0367A6)),
                       ),
                       trailing: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
