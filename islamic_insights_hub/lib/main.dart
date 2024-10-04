@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Islamic Insights Hub',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor:Color(0xff023E73)),
+        colorScheme: ColorScheme.fromSeed(seedColor: Color(0xff023E73)),
         useMaterial3: true,
       ),
       home: const SplashScr(),
@@ -111,9 +111,14 @@ class _TabsScrState extends State<TabsScr> {
             centerTitle: true,
             // backgroundColor: Color(0XFF010D26),
             bottom: TabBar(
-              labelColor: Color(0XFF023E73),
+              labelColor: Colors.white,
               unselectedLabelColor: Colors.grey,
               indicatorColor: Color(0xff010D26),
+              indicatorSize: TabBarIndicatorSize.tab,
+              indicator: BoxDecoration(
+              shape: BoxShape.rectangle,
+                  borderRadius: BorderRadius.circular(50), // Creates border
+                  color: Color(0xff010D26)),
               tabs: [
                 Tab(
                   text: "Quran",

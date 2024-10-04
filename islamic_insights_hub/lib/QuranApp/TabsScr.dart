@@ -29,26 +29,64 @@ class _TabsScrState extends State<TabsScr> {
             ),
             centerTitle: true,
             bottom: TabBar(
+              isScrollable: true,
               labelColor: Color(0XFF023E73),
               unselectedLabelColor: Colors.grey,
               indicatorColor: Color(0xff010D26),
               tabs: [
-                Tab(
-                  text: "Quran",
-                ),
-                Tab(
-                  text: "Search Quran",
-                ),
-                Tab(
-                  text: "Recitation",
-                ),
-                Tab(
-                  text: "Translation",
-                ),
-                Tab(
-                  text: "Juz Quran",
-                ),
-              ],
+  Tab(
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(Icons.book),
+        SizedBox(width: 8), // Add spacing between icon and text
+        Text("Quranic Surahs"),
+      ],
+    ),
+  ),
+  Tab(
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(Icons.search),
+        SizedBox(width: 8),
+        Text("Search"),
+      ],
+    ),
+  ),
+  Tab(
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(Icons.audiotrack),
+        SizedBox(width: 8),
+        Text("Recitation"),
+      ],
+    ),
+  ),
+  Tab(
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(Icons.translate_rounded),
+        SizedBox(width: 8),
+        Text("Translation"),
+      ],
+    ),
+  ),
+  Tab(
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(Icons.book_rounded),
+        SizedBox(width: 8),
+        Text("Juz Quran"),
+      ],
+    ),
+  ),
+],
+
+              
             ),
           ),
           body: TabBarView(children: [
