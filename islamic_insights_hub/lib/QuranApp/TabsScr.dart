@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:islamic_insights_hub/QuranApp/QuranAudioScr.dart';
+import 'package:islamic_insights_hub/QuranApp/QuranCloud.dart';
 import 'package:islamic_insights_hub/QuranApp/QuranJuzScr.dart';
 import 'package:islamic_insights_hub/QuranApp/QuranTranslationScr.dart';
 import 'Quranlist.dart';
@@ -16,7 +17,7 @@ class _TabsScrState extends State<TabsScr> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 5,
+      length: 6,
       child: Scaffold(
           appBar: AppBar(
             title: Text(
@@ -41,6 +42,16 @@ class _TabsScrState extends State<TabsScr> {
         Icon(Icons.book),
         SizedBox(width: 8), // Add spacing between icon and text
         Text("Quranic Surahs"),
+      ],
+    ),
+  ),
+    Tab(
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(Icons.cloud),
+        SizedBox(width: 8),
+        Text("QuranCloud"),
       ],
     ),
   ),
@@ -91,6 +102,7 @@ class _TabsScrState extends State<TabsScr> {
           ),
           body: TabBarView(children: [
             Quranlist(),
+            QuranCloudScr(),
             SearchQuran(),
             QuranAudioScr(),
             QuranTranslationScr(),

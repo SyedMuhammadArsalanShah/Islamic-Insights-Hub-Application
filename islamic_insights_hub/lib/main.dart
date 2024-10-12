@@ -117,8 +117,8 @@ class _TabsScrState extends State<TabsScr> {
               indicatorSize: TabBarIndicatorSize.tab,
               indicator: BoxDecoration(
               shape: BoxShape.rectangle,
-                  borderRadius: BorderRadius.circular(50), // Creates border
-                  color: Color(0xff010D26)),
+                  borderRadius: BorderRadius.circular(10), // Creates border
+                  color:Color(0XFF023E73)),
               tabs: [
                 Tab(
                   text: "Quran",

@@ -29,7 +29,7 @@ class _QuranlistState extends State<Quranlist> {
         mapResponse = jsonDecode(response.body);
         dataResponse = mapResponse['data']['surahs'];
         listResponse = dataResponse['references'];
-        print("SMAS=>$listResponse");
+        // print("SMAS=>$listResponse");
       });
     }
   }
