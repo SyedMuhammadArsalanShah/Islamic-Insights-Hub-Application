@@ -40,6 +40,9 @@ dependencies:
   just_audio: ^0.9.40
   quran: ^1.3.0
   google_fonts: ^6.2.1
+  path_provider: ^2.1.4
+  dio: ^5.7.0
+  share_plus: ^10.1.1
 
 dev_dependencies:
   flutter_test:

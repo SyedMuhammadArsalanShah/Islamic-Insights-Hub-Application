@@ -1,8 +1,12 @@
 import 'dart:convert';
+import 'dart:io';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:just_audio/just_audio.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 import 'surahindex.dart';
 
@@ -236,52 +240,148 @@ class _QuranCloudState extends State<QuranCloud> {
     }
   }
 
-@override
-void initState() {
-  super.initState();
-  apicall();
-  languageapicodes(); // Call API when the widget is initialized
-
-  // Listen for the completion of the audio and update the UI accordingly
-    audioPlayer.processingStateStream.listen((processingState) {
-      if (processingState == ProcessingState.completed) {
-        setState(() {
-          isPlaying = false;
-          currentlyPlayingIndex = null; // Reset when playback completes
-        });
-      }
-    });
-}
-
-
   // Audio player variables
   AudioPlayer audioPlayer = AudioPlayer();
   int? currentlyPlayingIndex; // Track the index of the playing Ayah
   bool isPlaying = false;
+  @override
+  void initState() {
+    super.initState();
+    apicall();
+    languageapicodes(); // Call API when the widget is initialized
 
- Future<void> togglePlayPause(String audioUrl, int index) async {
-  try {
-    // If audio is playing and the user taps the currently playing Ayah, pause it
-    if (isPlaying && currentlyPlayingIndex == index) {
-      await audioPlayer.pause();
+    // Listen for playback completion to play the next Ayah
+    audioPlayer.processingStateStream.listen((processingState) {
+      if (processingState == ProcessingState.completed) {
+        playNextAyah();
+      }
+    });
+  }
+
+  // Play the next Ayah automatically
+  void playNextAyah() {
+    if (currentlyPlayingIndex != null &&
+        currentlyPlayingIndex! < listResponse.length - 1) {
+      int nextIndex = currentlyPlayingIndex! + 1;
+      togglePlayPause(listResponse[nextIndex]['audio'], nextIndex);
+    } else {
       setState(() {
         isPlaying = false;
-      });
-    } else {
-      // If a different Ayah is tapped, stop the previous audio and play the new one
-      await audioPlayer.stop();
-      await audioPlayer.setUrl(audioUrl);
-      await audioPlayer.play();
-      setState(() {
-        currentlyPlayingIndex = index;
-        isPlaying = true;
+        currentlyPlayingIndex = null;
       });
     }
-  } catch (e) {
-    print("Error playing audio: $e");
   }
-}
 
+  // Toggle play/pause and handle switching between Ayahs
+  Future<void> togglePlayPause(String audioUrl, int index) async {
+    try {
+      // Check if the same Ayah is playing to avoid reloading
+      if (isPlaying && currentlyPlayingIndex == index) {
+        await audioPlayer.pause();
+        setState(() => isPlaying = false);
+      } else {
+        if (currentlyPlayingIndex != null && currentlyPlayingIndex != index) {
+          await audioPlayer.stop(); // Only stop if switching Ayahs
+        }
+        await audioPlayer.setUrl(audioUrl);
+        await audioPlayer.play();
+        setState(() {
+          currentlyPlayingIndex = index;
+          isPlaying = true;
+        });
+      }
+    } catch (e) {
+      print("Error playing audio: $e");
+    }
+  }
+
+  // Future<void> togglePlayPause(String audioUrl, int index) async {
+  //   try {
+  //     // If audio is playing and the user taps the currently playing Ayah, pause it
+  //     if (isPlaying && currentlyPlayingIndex == index) {
+  //       await audioPlayer.pause();
+  //       setState(() {
+  //         isPlaying = false;
+  //       });
+  //     } else {
+  //       // If a different Ayah is tapped, stop the previous audio and play the new one
+  //       await audioPlayer.stop();
+  //       await audioPlayer.setUrl(audioUrl);
+  //       await audioPlayer.play();
+  //       setState(() {
+  //         currentlyPlayingIndex = index;
+  //         isPlaying = true;
+  //       });
+  //     }
+  //   } catch (e) {
+  //     print("Error playing audio: $e");
+  //   }
+  // }
+  Future<void> downloadAudio(String audioUrl, String filename) async {
+    try {
+      // Get the application's documents directory
+      Directory appDocDir = await getApplicationDocumentsDirectory();
+      String filePath = '${appDocDir.path}/$filename';
+
+      // Create Dio instance
+      Dio dio = Dio();
+      await dio.download(audioUrl, filePath);
+
+      // Show a success message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Downloaded: $filename")),
+      );
+    } catch (e) {
+      // Handle any errors
+      print("Error downloading file: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Failed to download: $filename")),
+      );
+    }
+  }
+
+  // Method to share text or audio link
+  Future<void> shareContent(String arabic, String text, String audioUrl) async {
+    await Share.share(
+        'Ayah Text: $arabic\nTranslation Text: $text\nAudio Link: $audioUrl');
+  }
+
+  // Method to show dialog for actions
+  void showActionDialog(
+      String arabic, String ayahText, String audioUrl, index) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Choose an Action'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: Icon(Icons.download),
+                title: Text('Download Audio'),
+                onTap: () {
+                  Navigator.of(context).pop(); // Close the dialog
+                  if (audioUrl != null) {
+                    downloadAudio(audioUrl,
+                        "Surah ${widget.name.namee} | ayah_${index + 1}.mp3"); // Download the audio
+                  }
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.share),
+                title: Text('Share'),
+                onTap: () {
+                  Navigator.of(context).pop(); // Close the dialog
+                  shareContent(arabic, ayahText, audioUrl ?? '');
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 
   @override
   void dispose() {
@@ -361,11 +461,13 @@ void initState() {
                   isDense: true,
                   value: selectedLanguage,
                   hint: Center(
-                    child: const Text("Select Language", style: TextStyle(
-                                    fontFamily: "jameel",
-                                    color: Color(0XFF023E73)),
-                                    textDirection: TextDirection.rtl,
-                                textAlign: TextAlign.center,),
+                    child: const Text(
+                      "Select Language",
+                      style: TextStyle(
+                          fontFamily: "jameel", color: Color(0XFF023E73)),
+                      textDirection: TextDirection.rtl,
+                      textAlign: TextAlign.center,
+                    ),
                   ), // Hint for the dropdown
                   items: languagesList.isNotEmpty
                       ? languagesList.asMap().entries.map((entry) {
@@ -378,12 +480,14 @@ void initState() {
                             value:
                                 languageCode, // Use the language code as the value
                             child: Center(
-                              child: Text(languages[
-                                  index], style: TextStyle(
+                              child: Text(
+                                languages[index],
+                                style: TextStyle(
                                     fontFamily: "jameel",
                                     color: Color(0XFF023E73)),
-                                    textDirection: TextDirection.rtl,
-                                textAlign: TextAlign.center,),
+                                textDirection: TextDirection.rtl,
+                                textAlign: TextAlign.center,
+                              ),
                             ), // Display the corresponding language name by index
                           );
                         }).toList()
@@ -410,14 +514,15 @@ void initState() {
                   ),
                   isDense: true,
                   value: selectedLanaguageData,
-                  hint:
-                      Center(
-                        child: const Text("Select Identifier", style: TextStyle(
-                                    fontFamily: "jameel",
-                                    color: Color(0XFF023E73)),
-                                    textDirection: TextDirection.rtl,
-                                textAlign: TextAlign.center,),
-                      ), // Hint for the dropdown
+                  hint: Center(
+                    child: const Text(
+                      "Select Identifier",
+                      style: TextStyle(
+                          fontFamily: "jameel", color: Color(0XFF023E73)),
+                      textDirection: TextDirection.rtl,
+                      textAlign: TextAlign.center,
+                    ),
+                  ), // Hint for the dropdown
                   items: iList.isNotEmpty
                       ? iList.asMap().entries.map((entry) {
                           return DropdownMenuItem<String>(
@@ -429,7 +534,7 @@ void initState() {
                                 style: TextStyle(
                                     fontFamily: "jameel",
                                     color: Color(0XFF023E73)),
-                                    textDirection: TextDirection.rtl,
+                                textDirection: TextDirection.rtl,
                                 textAlign: TextAlign.center,
                               ),
                             ), // Display the corresponding language name
@@ -469,56 +574,153 @@ void initState() {
                         return Card(
                           margin: const EdgeInsets.all(10),
                           shape: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: const BorderSide(color: Colors.white),
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(
+                              color: currentlyPlayingIndex == index
+                                  ? Colors.indigo
+                                  : Colors
+                                      .transparent, // Highlight playing Ayah
+                              width: 2.0,
+                            ),
                           ),
+                          color: currentlyPlayingIndex == index
+                              ? Colors.blue.shade50
+                              : Colors.white,
                           child: ListTile(
-                            title: Padding(
-                              padding: const EdgeInsets.all(20.0),
-                              child: Center(
-                                child: Text(
-                                  listResponse[index]['text'],
-                                  style: GoogleFonts.amiriQuran(
-                                      color: Colors.black),
+                              title: Padding(
+                                padding: const EdgeInsets.all(20.0),
+                                child: Center(
+                                  child: Text(
+                                    listResponse[index]['text'],
+                                    textDirection: TextDirection.rtl,
+                                    textAlign: TextAlign.right,
+                                    style: GoogleFonts.amiriQuran(
+                                        color: Colors.black),
+                                  ),
                                 ),
                               ),
-                            ),
-                            subtitle: Column(
-                              children: [
-                                if (audioUrl == null)
-                                  Center(child: Text(ayahText, style: TextStyle(
-                                  fontFamily: "jameel",
-                                  fontSize: 20,
-                                  color: Color(0XFF023E73)),
-                       
-                              textAlign: TextAlign.center,))
-                                else
-                                  Padding(
-                                    padding: const EdgeInsets.all(16.0),
-                                    child: Card(
-                                      elevation: 6,
-                                      shadowColor: Colors.indigo[900],
-                                      child: Center(
-                                        child: IconButton(
-                                          icon: Icon(
-                                            
-                                            currentlyPlayingIndex == index &&
-                                                    isPlaying
-                                                ? Icons.pause_circle_rounded
-                                                : Icons
-                                                    .play_circle_fill_rounded,
-                                            color: Colors.indigo[900],
+                              subtitle: Column(
+                                children: [
+                                  if (audioUrl == null)
+                                    Center(
+                                        child: Text(
+                                      ayahText,
+                                      style: TextStyle(
+                                          fontFamily: "jameel",
+                                          fontSize: 20,
+                                          color: Color(0XFF023E73)),
+                                               textDirection: TextDirection.rtl,
+                                    // textAlign: TextAlign.right,
+                                      textAlign: TextAlign.center,
+                                    ))
+                                  else
+                                    // Padding(
+                                    //   padding: const EdgeInsets.all(16.0),
+                                    //   child: Card(
+                                    //     elevation: 6,
+                                    //     shadowColor: Colors.indigo[900],
+                                    //     child: Center(
+                                    //       child: IconButton(
+                                    //         icon: Icon(
+                                    //           currentlyPlayingIndex == index &&
+                                    //                   isPlaying
+                                    //               ? Icons.pause_circle_rounded
+                                    //               : Icons
+                                    //                   .play_circle_fill_rounded,
+                                    //           color: Colors.indigo[900],
+                                    //         ),
+                                    //         onPressed: () {
+                                    //           togglePlayPause(audioUrl, index);
+                                    //         },
+                                    //       ),
+                                    //     ),
+                                    //   ),
+                                    // ),
+
+                                    Card(
+                                      color: Colors.white30,
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          IconButton(
+                                            icon: Icon(
+                                              Icons.skip_previous,
+                                              color: Colors.indigo[900],
+                                              size:
+                                                  36, // Increase this value to make the icon larger
+                                            ),
+                                            onPressed: index > 0
+                                                ? () => togglePlayPause(
+                                                    listresp[index - 1]
+                                                        ['audio'],
+                                                    index - 1)
+                                                : null,
                                           ),
-                                          onPressed: () {
-                                            togglePlayPause(audioUrl, index);
-                                          },
-                                        ),
+                                          IconButton(
+                                            icon: Icon(
+                                              isPlaying &&
+                                                      currentlyPlayingIndex ==
+                                                          index
+                                                  ? Icons.pause
+                                                  : Icons.play_arrow,
+                                              color: Colors.blue,
+                                              size:
+                                                  36, // Increase this value to make the icon larger
+                                            ),
+                                            onPressed: () {
+                                              if (audioUrl != null) {
+                                                togglePlayPause(
+                                                    audioUrl, index);
+                                              }
+                                            },
+                                          ),
+                                          IconButton(
+                                            icon: Icon(
+                                              Icons.skip_next,
+                                              color: Colors.indigo[900],
+                                              size:
+                                                  36, // Increase this value to make the icon larger
+                                            ),
+                                            onPressed:
+                                                index < listResponse.length - 1
+                                                    ? () => togglePlayPause(
+                                                        listresp[index + 1]
+                                                            ['audio'],
+                                                        index + 1)
+                                                    : null,
+                                          ),
+
+                                          // button in dialog
+                                          // IconButton(
+                                          //   icon: Icon(Icons.download),
+                                          //   onPressed: () {
+                                          //     if (audioUrl != null) {
+                                          //       downloadAudio(audioUrl,
+                                          //           "Surah ${widget.name.namee} | ayah_${index + 1}.mp3"); // Download the audio
+                                          //     }
+                                          //   },
+                                          // ),
+                                        ],
                                       ),
                                     ),
-                                  ),
-                              ],
-                            ),
-                          ),
+                                ],
+                              ),
+                            onTap: () {
+                              
+                            
+                                  // Show the action dialog when tapping on the ListTile
+                                  showActionDialog(
+                                    listResponse[index]['text'].toString(),
+                                    ayahText.isNotEmpty
+                                        ? ayahText
+                                        : 'No text available', // Ensure ayahText is not null
+                                    audioUrl ??
+                                        '', // Provide an empty string if audioUrl is null
+                                    index + 1,
+                                  );
+                                },
+                              ),
                         );
                       },
                       itemCount: listResponse.length,
