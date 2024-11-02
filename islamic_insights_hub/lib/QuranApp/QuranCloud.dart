@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:just_audio/just_audio.dart';
+import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -277,18 +278,18 @@ class _QuranCloudState extends State<QuranCloud> {
     try {
       // Check if the same Ayah is playing to avoid reloading
       if (isPlaying && currentlyPlayingIndex == index) {
-        await audioPlayer.pause();
         setState(() => isPlaying = false);
+        await audioPlayer.pause();
       } else {
         if (currentlyPlayingIndex != null && currentlyPlayingIndex != index) {
           await audioPlayer.stop(); // Only stop if switching Ayahs
         }
         await audioPlayer.setUrl(audioUrl);
-        await audioPlayer.play();
         setState(() {
           currentlyPlayingIndex = index;
           isPlaying = true;
         });
+        await audioPlayer.play();
       }
     } catch (e) {
       print("Error playing audio: $e");
@@ -317,7 +318,7 @@ class _QuranCloudState extends State<QuranCloud> {
   //     print("Error playing audio: $e");
   //   }
   // }
-  Future<void> downloadAudio(String audioUrl, String filename) async {
+   Future<void> downloadAudio(String audioUrl, String filename) async {
     try {
       // Get the application's documents directory
       Directory appDocDir = await getApplicationDocumentsDirectory();
@@ -327,9 +328,19 @@ class _QuranCloudState extends State<QuranCloud> {
       Dio dio = Dio();
       await dio.download(audioUrl, filePath);
 
-      // Show a success message
+      // Show a success message with Snackbar action
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Downloaded: $filename")),
+        SnackBar(
+          content: Text("Downloaded: $filename"),
+          duration: Duration(seconds: 5),
+          action: SnackBarAction(
+            label: 'Open',
+            onPressed: () {
+              // Open the downloaded file location
+              OpenFile.open(filePath);
+            },
+          ),
+        ),
       );
     } catch (e) {
       // Handle any errors
@@ -397,6 +408,7 @@ class _QuranCloudState extends State<QuranCloud> {
               style: const TextStyle(fontFamily: 'alq', color: Colors.white)),
           backgroundColor: Color(0xff023E73),
         ),
+        
         body: Column(
           children: [
             Center(
@@ -577,14 +589,14 @@ class _QuranCloudState extends State<QuranCloud> {
                             borderRadius: BorderRadius.circular(12),
                             borderSide: BorderSide(
                               color: currentlyPlayingIndex == index
-                                  ? Colors.indigo
+                                  ? Color(0XFF023E73)
                                   : Colors
                                       .transparent, // Highlight playing Ayah
                               width: 2.0,
                             ),
                           ),
                           color: currentlyPlayingIndex == index
-                              ? Colors.blue.shade50
+                              ? Color(0xffececec)
                               : Colors.white,
                           child: ListTile(
                               title: Padding(
@@ -638,7 +650,7 @@ class _QuranCloudState extends State<QuranCloud> {
                                     // ),
 
                                     Card(
-                                      color: Colors.white30,
+                                      color: Color(0XFF023E73),
                                       child: Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
@@ -646,7 +658,7 @@ class _QuranCloudState extends State<QuranCloud> {
                                           IconButton(
                                             icon: Icon(
                                               Icons.skip_previous,
-                                              color: Colors.indigo[900],
+                                              color: Colors.white,
                                               size:
                                                   36, // Increase this value to make the icon larger
                                             ),
@@ -664,7 +676,7 @@ class _QuranCloudState extends State<QuranCloud> {
                                                           index
                                                   ? Icons.pause
                                                   : Icons.play_arrow,
-                                              color: Colors.blue,
+                                              color: Colors.white,
                                               size:
                                                   36, // Increase this value to make the icon larger
                                             ),
@@ -678,7 +690,7 @@ class _QuranCloudState extends State<QuranCloud> {
                                           IconButton(
                                             icon: Icon(
                                               Icons.skip_next,
-                                              color: Colors.indigo[900],
+                                              color: Colors.white,
                                               size:
                                                   36, // Increase this value to make the icon larger
                                             ),
