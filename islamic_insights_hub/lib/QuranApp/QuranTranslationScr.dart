@@ -83,18 +83,25 @@ class SurahTranslation extends StatefulWidget {
 class _SurahTranslationState extends State<SurahTranslation> {
   dynamic selectedTranslation =
       quran.Translation.enSaheeh; // Default translation
-  Map<String, dynamic> translations = {
-    "English (Saheeh International)": quran.Translation.enSaheeh,
-    "English (Clear Quran)": quran.Translation.enClearQuran,
-    "French (Muhammad Hamidullah)": quran.Translation.frHamidullah,
-    "Turkish": quran.Translation.trSaheeh,
-    "Malayalam": quran.Translation.mlAbdulHameed,
-    "Farsi": quran.Translation.faHusseinDari,
-    "Portuguese": quran.Translation.pt,
-    "Italian": quran.Translation.itPiccardo,
-    "Dutch": quran.Translation.nlSiregar,
-    "Russian": quran.Translation.ruKuliev
-  };
+Map<String, dynamic> translations = {
+  "English (Saheeh International)": quran.Translation.enSaheeh,
+  "English (Clear Quran)": quran.Translation.enClearQuran,
+  "French (Muhammad Hamidullah)": quran.Translation.frHamidullah,
+  "Turkish": quran.Translation.trSaheeh,
+  "Malayalam": quran.Translation.mlAbdulHameed,
+  "Farsi": quran.Translation.faHusseinDari,
+  "Portuguese": quran.Translation.portuguese,
+  "Italian": quran.Translation.itPiccardo,
+  "Dutch": quran.Translation.nlSiregar,
+  "Russian": quran.Translation.ruKuliev,
+  "Bengali": quran.Translation.bengali,
+  "Chinese": quran.Translation.chinese,
+  "Swedish": quran.Translation.swedish,
+  "Spanish": quran.Translation.spanish,
+  "Urdu": quran.Translation.urdu,
+  "Indonesian": quran.Translation.indonesian
+};
+
 
   @override
   Widget build(BuildContext context) {
