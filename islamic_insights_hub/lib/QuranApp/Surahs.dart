@@ -22,14 +22,14 @@ class _SurahsState extends State<Surahs> {
   Future apicall() async {
     http.Response response;
 
+    int indexofsurah = widget.name.numm;
     response = await http
-        .get(Uri.parse("http://api.alquran.cloud/v1/quran/quran-uthmani"));
+        .get(Uri.parse("https://api.alquran.cloud/v1/surah/${indexofsurah}"));
     if (response.statusCode == 200) {
       setState(() {
         mapResponse = jsonDecode(response.body);
-        dataResponse = mapResponse['data'];
-        int indexofsurah = widget.name.numm - 1;
-        listResponse = dataResponse['surahs'][indexofsurah]['ayahs'];
+        // dataResponse = mapResponse['data'];
+        listResponse = mapResponse['data']['ayahs'];
         print("WA910=>$listResponse");
       });
     }
