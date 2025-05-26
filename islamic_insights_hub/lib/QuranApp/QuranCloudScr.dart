@@ -21,13 +21,13 @@ class _QuranCloudScrState extends State<QuranCloudScr> {
   Future apicall() async {
     http.Response response;
 
-    response = await http.get(Uri.parse("http://api.alquran.cloud/v1/meta"));
+    response = await http.get(Uri.parse("https://api.alquran.cloud/v1/surah"));
     if (response.statusCode == 200) {
       setState(() {
         // stringresponse = response.body;
         mapResponse = jsonDecode(response.body);
-        dataResponse = mapResponse['data']['surahs'];
-        listResponse = dataResponse['references'];
+        // dataResponse = mapResponse['data']['surahs'];
+        listResponse = mapResponse['data'];
         print("SMAS=>$listResponse");
       });
     }
@@ -101,7 +101,7 @@ class _QuranCloudScrState extends State<QuranCloudScr> {
                 itemCount: listResponse == null ? 0 : listResponse.length,
               )
             : Center(
-                child: LinearProgressIndicator(),
+                child: CircularProgressIndicator(),
               ));
   }
 }
