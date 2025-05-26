@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:islamic_insights_hub/QuranApp/QuranAudioScr.dart';
-import 'package:islamic_insights_hub/QuranApp/QuranCloud.dart';
 import 'package:islamic_insights_hub/QuranApp/QuranJuzScr.dart';
 import 'package:islamic_insights_hub/QuranApp/QuranTranslationScr.dart';
+import 'QuranCloudScr.dart';
 import 'Quranlist.dart';
 import 'SearchQuran.dart';
 

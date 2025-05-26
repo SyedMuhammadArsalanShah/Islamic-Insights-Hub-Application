@@ -7,10 +7,6 @@ import 'package:http/http.dart' as http;
 import 'Surahs.dart';
 import 'surahindex.dart';
 
-late Map mapResponse = {};
-late Map dataResponse = {};
-late List listResponse = [];
-
 class Quranlist extends StatefulWidget {
   const Quranlist({Key? key}) : super(key: key);
 
@@ -19,6 +15,9 @@ class Quranlist extends StatefulWidget {
 }
 
 class _QuranlistState extends State<Quranlist> {
+  Map mapResponse = {};
+  Map dataResponse = {};
+  List listResponse = [];
   Future apicall() async {
     http.Response response;
 
@@ -77,7 +76,7 @@ class _QuranlistState extends State<Quranlist> {
                         ),
                       ),
                       title: Text(listResponse[index]['name'],
-                             style: GoogleFonts.amiriQuran()),
+                          style: GoogleFonts.amiriQuran()),
                       subtitle: Text(
                         listResponse[index]['englishName'],
                         style: GoogleFonts.amiriQuran(color: Color(0Xff0367A6)),

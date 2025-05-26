@@ -6,11 +6,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'surahindex.dart';
 
-Map mapResponse = {};
-Map dataResponse = {};
-List listResponse = [];
-List listResponse1 = [];
-
 class Surahs extends StatefulWidget {
   final Surahindex name;
   Surahs({Key? key, required this.name}) : super(key: key);
@@ -20,6 +15,10 @@ class Surahs extends StatefulWidget {
 }
 
 class _SurahsState extends State<Surahs> {
+  Map mapResponse = {};
+  Map dataResponse = {};
+  List listResponse = [];
+  List listResponse1 = [];
   Future apicall() async {
     http.Response response;
 
@@ -76,18 +75,17 @@ class _SurahsState extends State<Surahs> {
                       children: [
                         Text("Surah ${widget.name.namee} ",
                             textAlign: TextAlign.center,
-                               style: GoogleFonts.amiriQuran(
-                                fontSize: 15,
-                                color: Colors.white)),
+                            style: GoogleFonts.amiriQuran(
+                                fontSize: 15, color: Colors.white)),
                         Text(widget.name.englishNameTranslation,
                             textAlign: TextAlign.center,
-                             style: GoogleFonts.amiriQuran( color: Colors.white)),
+                            style: GoogleFonts.amiriQuran(color: Colors.white)),
                       ],
                     ),
                     title: Text(widget.name.urname,
                         textAlign: TextAlign.center,
                         textDirection: TextDirection.rtl,
-                         style: GoogleFonts.amiriQuran( color: Colors.white)),
+                        style: GoogleFonts.amiriQuran(color: Colors.white)),
                     trailing: Column(
                       mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -125,7 +123,8 @@ class _SurahsState extends State<Surahs> {
                               child: Text(
                                 listResponse[index]['text'],
                                 textDirection: TextDirection.rtl,
-                                  style: GoogleFonts.amiriQuran( color: Colors.black),
+                                style:
+                                    GoogleFonts.amiriQuran(color: Colors.black),
                               ),
                             ),
                           ),
