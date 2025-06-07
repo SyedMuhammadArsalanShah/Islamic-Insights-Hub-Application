@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Islamic Insights Hub',
+      title: 'Islamic Vision',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Color(0xff023E73)),
         useMaterial3: true,
@@ -67,7 +67,7 @@ class _SplashScrState extends State<SplashScr> {
         children: [
           Center(
               child: Text(
-            "Islamic Insights Hub",
+            "Islamic Vision",
             style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontFamily: "jameel",
@@ -106,7 +106,7 @@ class _TabsScrState extends State<TabsScr> {
       child: Scaffold(
           appBar: AppBar(
             title: Text(
-              "Islamic Insights Hub",
+              "Islamic Vision",
               style: TextStyle(
                 color: Color(0xff010D26),
               ),
@@ -178,7 +178,7 @@ class AboutScreen extends StatelessWidget {
       backgroundColor: darkBlue,
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: const Text('About Islamic Insights Hub'),
+        title: const Text('About Islamic Vision'),
         centerTitle: true,
         elevation: 0,
       ),
@@ -188,7 +188,7 @@ class AboutScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Islamic Insights Hub',
+              'Islamic Vision',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 28,
@@ -246,7 +246,7 @@ class AboutScreen extends StatelessWidget {
                 children: [
                   const TextSpan(text: 'GitHub Repository: '),
                   TextSpan(
-                    text: 'Islamic Insights Hub ',
+                    text: 'Islamic Vision',
                     style: TextStyle(
                        color: Colors.blue,
                       fontWeight: FontWeight.w600,
@@ -275,7 +275,7 @@ class AboutScreen extends StatelessWidget {
 
             Center(
               child: Text(
-                '© 2023 Islamic Insights Hub. All rights reserved.',
+                '© 2023 Islamic Vision. All rights reserved.',
                 style: TextStyle(
                   color: Colors.white38,
                   fontSize: 13,
